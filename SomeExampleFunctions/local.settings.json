@@ -1,0 +1,8 @@
+﻿{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "AzureWebJobsBrokerConnectionString": "Endpoint=sb://sb-integrationlab.servicebus.windows.net/;SharedAccessKeyName=GeneralPolicy;SharedAccessKey=ahm8sfcHVCsqo7NKBhBTjHZPFduioKxi47qO7Nw5T/w=",
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet"
+  }
+}
