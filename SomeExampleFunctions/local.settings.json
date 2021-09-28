@@ -2,7 +2,13 @@
   "IsEncrypted": false,
   "Values": {
     "AzureWebJobsStorage": "UseDevelopmentStorage=true",
-    "AzureWebJobsBrokerConnectionString": "Endpoint=sb://sb-integrationlab.servicebus.windows.net/;SharedAccessKeyName=GeneralPolicy;SharedAccessKey=ahm8sfcHVCsqo7NKBhBTjHZPFduioKxi47qO7Nw5T/w=",
+    "BrokerConnectionString": "Endpoint=sb://sb-integrationlab.servicebus.windows.net/;SharedAccessKeyName=GeneralPolicy;SharedAccessKey=ahm8sfcHVCsqo7NKBhBTjHZPFduioKxi47qO7Nw5T/w=",
+    "StorageConnectionString": "DefaultEndpointsProtocol=https;AccountName=saintegrationlab;AccountKey=9OON4Y3x5oylBpi4JWGEBb4AUkbcBWmCkPLL+b3v0/vbbSR8zEsJabkpwRqw1HBOKDWQKjgAFIbdwHbseQTBBw==;EndpointSuffix=core.windows.net",
+    "StorageContainerName": "messages",
+    "DatabaseConnectionString": "mongodb://dba-integrationlab:daHUzdnHgqpwGLMniPPR6Ne5RElSJJiOEWCwdc3ZKe6L1m9vVtlSZNETciYwFkUHPAfHyqQHKVPIV808g9uO3Q==@dba-integrationlab.mongo.cosmos.azure.com:10255/?ssl=true&retrywrites=false&replicaSet=globaldb&maxIdleTimeMS=120000&appName=@dba-integrationlab@",
+    "DatabaseName": "db-integrationlab",
+    "DatabaseCollection": "integrations",
+    "MessageProcessorServiceUrl": "http://localhost:7071/api/",
     "FUNCTIONS_WORKER_RUNTIME": "dotnet"
   }
 }

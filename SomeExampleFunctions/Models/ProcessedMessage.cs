@@ -6,7 +6,7 @@
         {
             get
             {
-                return Secret.GetHashCode();
+                return Secret?.GetHashCode() ?? -0;
             }
         }
     }

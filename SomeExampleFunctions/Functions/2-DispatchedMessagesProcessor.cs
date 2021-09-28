@@ -1,35 +1,50 @@
-﻿//using System;
-//using System.IO;
-//using System.Threading.Tasks;
-//using Microsoft.AspNetCore.Mvc;
-//using Microsoft.Azure.WebJobs;
-//using Microsoft.Azure.WebJobs.Extensions.Http;
-//using Microsoft.AspNetCore.Http;
-//using Microsoft.Extensions.Logging;
-//using Newtonsoft.Json;
+﻿using System.IO;
+using System.Threading.Tasks;
+using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.WebJobs.Extensions.Http;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using SomeExampleFunctions.Models;
+using Microsoft.Azure.ServiceBus;
+using System.Text;
+using System;
+using SomeExampleFunctions.Shared;
 
-//namespace SomeExampleFunctions.Functions
-//{
-//    public static class DispatchedMessagesProcessor
-//    {
-//        [FunctionName("DispatchedMessagesProcessor")]
-//        public static async Task<IActionResult> Run(
-//            [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req,
-//            ILogger log)
-//        {
-//            log.LogInformation("C# HTTP trigger function processed a request.");
+namespace SomeExampleFunctions.Functions
+{
+    public class DispatchedMessagesProcessor
+    {
+        [FunctionName(nameof(DispatchedMessagesProcessor))]
+        [return: ServiceBus("messagesprocessed", Connection = "BrokerConnectionString")]
+        public static async Task<Message> Run(
+            [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req,
+            ILogger log)
+        {
+            var functionName = $"2:{nameof(DispatchedMessagesProcessor)}";
+            log.LogInformation($"Called '{functionName}'.");
 
-//            string name = req.Query["name"];
+            Failure.AtRateOf(25);
 
-//            string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-//            dynamic data = JsonConvert.DeserializeObject(requestBody);
-//            name = name ?? data?.name;
+            string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+            DispatchingMessage data = JsonConvert.DeserializeObject<DispatchingMessage>(requestBody);
 
-//            string responseMessage = string.IsNullOrEmpty(name)
-//                ? "This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response."
-//                : $"Hello, {name}. This HTTP triggered function executed successfully.";
+            log.LogInformation($"'{functionName}' received '{requestBody}' as a payload.");
 
-//            return new OkObjectResult(responseMessage);
-//        }
-//    }
-//}
+            var result = new ProcessedMessage
+            {
+                Secret = data.Secret
+            };
+            var jsonResult = JsonConvert.SerializeObject(result);
+            var binaryResult = Encoding.UTF8.GetBytes(jsonResult);
+
+            log.LogInformation($"'{functionName}' returning '{JsonConvert.SerializeObject(result)}'.");
+
+            return new Message
+            {
+                CorrelationId = Guid.NewGuid().ToString(),
+                Body = binaryResult
+            };
+        }
+    }
+}
