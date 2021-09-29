@@ -406,3 +406,7 @@ ASALocalRun/
 
 
 **/local.settings.json
+
+# Terraform`s
+**/.terraform*
+**/*.tfstate*
