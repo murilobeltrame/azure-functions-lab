@@ -16,6 +16,7 @@ namespace SomeExampleFunctions.Functions
     public class DispatchedMessagesProcessor
     {
         [FunctionName(nameof(DispatchedMessagesProcessor))]
+        [FixedDelayRetry(10, "00:00:01")]
         [return: ServiceBus("messagesprocessed", Connection = "BrokerConnectionString")]
         public static async Task<Message> Run(
             [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req,
@@ -31,6 +32,8 @@ namespace SomeExampleFunctions.Functions
 
             log.LogInformation($"'{functionName}' received '{requestBody}' as a payload.");
 
+            Failure.AtRateOf(25);
+
             var result = new ProcessedMessage
             {
                 Secret = data.Secret
@@ -39,6 +42,8 @@ namespace SomeExampleFunctions.Functions
             var binaryResult = Encoding.UTF8.GetBytes(jsonResult);
 
             log.LogInformation($"'{functionName}' returning '{JsonConvert.SerializeObject(result)}'.");
+
+            Failure.AtRateOf(25);
 
             return new Message
             {
