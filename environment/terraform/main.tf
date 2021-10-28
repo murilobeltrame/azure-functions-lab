@@ -114,6 +114,13 @@ resource "azurerm_cosmosdb_account" "dba" {
   resource_group_name = azurerm_resource_group.rg.name
   offer_type = "Standard"
   kind = "MongoDB"
+  geo_location {
+    location = azurerm_resource_group.rg.location
+    failover_priority = 0
+  }
+  consistency_policy {
+    consistency_level = "Eventual"
+  }
 }
 
 resource "azurerm_cosmosdb_mongo_database" "db" {
@@ -127,4 +134,39 @@ resource "azurerm_cosmosdb_mongo_collection" "dbc" {
   resource_group_name = azurerm_resource_group.rg.name
   account_name = azurerm_cosmosdb_account.dba.name
   database_name = azurerm_cosmosdb_mongo_database.db.name
+}
+
+data "azurerm_servicebus_namespace" "broker" {
+  name = azurerm_servicebus_namespace.sb.name
+  resource_group_name = azurerm_resource_group.rg.name
+}
+output "BrokerConnectionString" {
+  value = data.azurerm_servicebus_namespace.broker.default_primary_connection_string
+  sensitive = true
+}
+
+output "StorageConnectionString" {
+  value = azurerm_storage_account.sa.primary_blob_connection_string
+  sensitive = true
+}
+
+output "StorageContainerName" {
+  value = azurerm_storage_container.sa_container.name
+}
+
+data "azurerm_cosmosdb_account" "database_account" {
+  name = azurerm_cosmosdb_account.dba.name
+  resource_group_name = azurerm_resource_group.rg.name
+}
+output "DatabaseConnectionString" {
+  value = "mongodb://${data.azurerm_cosmosdb_account.database_account.name}:${data.azurerm_cosmosdb_account.database_account.primary_key}@${data.azurerm_cosmosdb_account.database_account.name}.mongo.cosmos.azure.com:10255/?ssl=true&replicaSet=globaldb&retrywrites=false&maxIdleTimeMS=120000&appName=@${data.azurerm_cosmosdb_account.database_account.name}@"
+  sensitive = true
+}
+
+output "DatabaseName" {
+  value = azurerm_cosmosdb_mongo_database.db.name
+}
+
+output "DatabaseCollection" {
+  value = azurerm_cosmosdb_mongo_collection.dbc.name
 }

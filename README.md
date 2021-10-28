@@ -20,13 +20,15 @@ Functions writes Message's metadata into CosmosDb with MongoDb API and Message's
 ## Running
 
 ```sh
+# '~' is used to represent the project`s root folder
 # create adjacent infrastructure
-$ cd environment/terraform
-az login
-terraform apply
+$ cd ~/environment/terraform
+$ az login
+$ terraform init
+$ terraform apply
 
 # running the project locally
-$ cd SomeExampleFunctions
+$ cd ~/SomeExampleFunctions
 $ func start --verbose
 ```
 
