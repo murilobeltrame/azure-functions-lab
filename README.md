@@ -17,6 +17,26 @@ All the functions has instructions (`Failure.AtRateOf(xx);`) to fail at some "ra
 Functions triggered by HTTP handles retries via attribute decoration (`[FixedDelayRetry(xx, "hh:mm:ss")]`) while Service Bus triggered Functions retries automatically whenever the function fails based on `MaxDeliveryCount` of the Service Bus Topic`s Subscription.<br />
 Functions writes Message's metadata into CosmosDb with MongoDb API and Message's body into Azure Storage Account to keep track of the process state, these data are expose by a REST API maded of HTTP triggered Azure Functions.
 
+## Local Configuration
+After running Terraform infrastructure automation, you should create and fill some configuration values in local.settings.json file at project's root.
+This file should not be uploaded to the repository as it contains sensitive data.
+```json
+{
+	"IsEncrypted": false,
+	"Values": {
+		"MessageProcessorServiceUrl": "http://localhost:7071/api/",
+		"FUNCTIONS_WORKER_RUNTIME": "dotnet",
+		"AzureWebJobsStorage": "UseDevelopmentStorage=true",
+		"BrokerConnectionString": "<run: terraform output BrokerConnectionString>",
+		"DatabaseConnectionString": "<run: terraform output DatabaseConnectionString>",
+		"StorageConnectionString": "<run: terraform output StorageConnectionString>",
+		"DatabaseCollection": "integrations",
+		"DatabaseName": "dbintegrationlab",
+		"StorageContainerName": "messages"
+	}
+}
+```
+
 ## Running
 
 ```sh
@@ -26,6 +46,7 @@ $ cd ~/environment/terraform
 $ az login
 $ terraform init
 $ terraform apply
+$ terraform output <property> (for sensitive data)
 
 # running the project locally
 $ cd ~/SomeExampleFunctions
