@@ -32,7 +32,14 @@ This file should not be uploaded to the repository as it contains sensitive data
 		"StorageConnectionString": "<run: terraform output StorageConnectionString>",
 		"DatabaseCollection": "integrations",
 		"DatabaseName": "dbintegrationlab",
-		"StorageContainerName": "messages"
+		"StorageContainerName": "messages",
+		"Serilog.DataDogLogs.ApiKey": "dummy",
+		"Serilog.DataDogLogs.Source": "azure-functions-lab",
+		"Serilog.DataDogLogs.Service": "some-example-functions",
+		"Serilog.DataDogLogs.Env": "azfn-lab",
+		"Serilog.DataDogLogs.Host": "azure",
+		"Serilog.DataDogLogs.BatchSizeLimit": 5000,
+		"Serilog.DataDogLogs.QueueLimit": 500000
 	}
 }
 ```
