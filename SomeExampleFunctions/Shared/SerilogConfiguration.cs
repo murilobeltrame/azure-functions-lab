@@ -6,12 +6,15 @@ namespace SomeExampleFunctions.Shared
 {
 	public static class SerilogConfiguration
 	{
+		private static readonly string SinkOutputTemplate = Configuration.ValueOf("Serilog.Sink.OutputTemplate");
+
 		public static LoggerConfiguration Configure()
 		{
 			LoggerConfiguration configuration = GetLoggerConfiguration();
 			SetLevelOverrides(configuration);
 			SetEnrichers(configuration);
 			SetConsoleSink(configuration);
+			SetFileSink(configuration);
 			SetDataDogLogsSink(configuration);
 			return configuration;
 		}//func
@@ -40,7 +43,23 @@ namespace SomeExampleFunctions.Shared
 
 		private static void SetConsoleSink(LoggerConfiguration configuration)
 		{
-			configuration.WriteTo.Console(outputTemplate: Configuration.ValueOf("Serilog.Console.OutputTemplate"));
+			configuration.WriteTo.Console(outputTemplate: SinkOutputTemplate);
+		}//func
+
+		private static void SetFileSink(LoggerConfiguration configuration)
+		{
+			configuration.WriteTo.Async(a =>
+			{
+				string appName = Configuration.ValueOf("AppName");
+				a.File(
+					path: $"{Configuration.ValueOf("Serilog.File.BaseFilePath")}/{appName}/{appName}.txt",
+					fileSizeLimitBytes: Convert.ToInt64(Configuration.ValueOf("Serilog.File.FileSizeLimitBytes")),
+					rollOnFileSizeLimit: true,
+					retainedFileCountLimit: Convert.ToInt32(Configuration.ValueOf("Serilog.File.RetainedFileCountLimit")),
+					encoding: System.Text.Encoding.UTF8,
+					outputTemplate: SinkOutputTemplate
+				);
+			});
 		}//func
 
 		private static void SetDataDogLogsSink(LoggerConfiguration configuration)
